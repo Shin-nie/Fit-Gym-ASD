@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const sequelize = require('./config/database'); // Your Sequelize instance
+
 // Import routes
 const userRoutes = require('./routes/userRoutes');
 const customerRoutes = require('./routes/customerRoutes');
@@ -39,8 +40,8 @@ sequelize.authenticate()
     console.error('Unable to connect to the database:', err);
   });
 
-// Serve static files from the frontend's dist folder
-app.use(express.static(path.join(__dirname, 'dist')));
+// Serve static files from the frontend's public folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Register API routes, prefixed with /api
 app.use('/api', userRoutes);
@@ -63,7 +64,7 @@ app.get('/api/health', (req, res) => {
 
 // Catch-all route to serve index.html for any non-API routes (client-side routing support)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist/index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start the server

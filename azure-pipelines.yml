@@ -5,10 +5,9 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  APP_NAME: 'FitGymASD'  # Your Azure App Service name for both frontend and backend
+  APP_NAME: 'fitgymasd-ekcge9fqfebydsbr'  # Your Azure App Service exact name
   RESOURCE_GROUP: 'ASDFitGym_group'  # Your Azure resource group name
-  AZURE_SUBSCRIPTION: 'Azure for Students'  # Azure DevOps service connection name
-  PUBLISH_PROFILE: $(PUBLISH_PROFILE)  # Store the Publish Profile securely in Azure DevOps as a secret
+  # Ensure PUBLISH_PROFILE is added as a secret in Azure DevOps with the full publish profile XML content
 
 stages:
 - stage: BuildAndDeploy
@@ -17,11 +16,11 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
-      # Install Node.js for both frontend and backend
+      # Install Node.js 18 to meet dependency requirements
       - task: NodeTool@0
         inputs:
-          versionSpec: '16.x'
-        displayName: 'Install Node.js'
+          versionSpec: '18.x'  # Updated to Node.js 18
+        displayName: 'Install Node.js 18.x'
 
       # Install backend dependencies
       - script: |
@@ -66,11 +65,23 @@ stages:
           archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
         displayName: 'Archive Combined Backend and Frontend for Deployment'
 
-      # Deploy to Azure App Service using Publish Profile
-      - task: AzureWebApp@1
+      # Deploy to Azure App Service using Publish Profile via Curl and Kudu API
+      - task: Bash@3
         inputs:
-          azureSubscription: $(AZURE_SUBSCRIPTION)
-          appName: $(APP_NAME)
-          package: $(Build.ArtifactStagingDirectory)/app.zip
-          publishProfile: $(PUBLISH_PROFILE)
-        displayName: 'Deploy to Azure App Service using Publish Profile'
+          targetType: 'inline'
+          script: |
+            echo "Starting deployment using Publish Profile..."
+            
+            # Extract username and password from the publish profile
+            PUBLISH_USERNAME=$(echo "$PUBLISH_PROFILE" | grep -oP '(?<=userName=")[^"]+')
+            PUBLISH_PASSWORD=$(echo "$PUBLISH_PROFILE" | grep -oP '(?<=userPWD=")[^"]+')
+            
+            # Use the exact domain with region suffix for deployment
+            curl -X POST -u "$PUBLISH_USERNAME:$PUBLISH_PASSWORD" \
+                 -F "package=@$(Build.ArtifactStagingDirectory)/app.zip" \
+                 https://fitgymasd-ekcge9fqfebydsbr.scm.australiacentral-01.azurewebsites.net/api/zipdeploy
+            
+            echo "Deployment to Azure App Service complete!"
+        env:
+          PUBLISH_PROFILE: $(PUBLISH_PROFILE)  # Explicitly map the secret as an environment variable
+        displayName: 'Deploy to Azure App Service using Publish Profile and Curl'
