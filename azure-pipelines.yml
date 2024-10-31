@@ -5,42 +5,64 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  AZURE_WEB_APP_NAME: 'gym'
-  KUDU_API_URL: 'https://gym-hkdtbzfbg4fjeyad.scm.canadacentral-01.azurewebsites.net'
-  FTP_USERNAME: 'gym\$gym'  # Use correct username format
-  # Ensure FTP_PASSWORD is stored securely as a secret in Azure DevOps
+  APP_NAME: 'FitGymASD'  # Your Azure App Service name
+  RESOURCE_GROUP: 'ASDFitGym_group'  # Your Azure resource group name
+  AZURE_SUBSCRIPTION: 'Azure for Students'  # Azure DevOps service connection name for your subscription
 
 stages:
-- stage: BuildAndDeploy
+- stage: BuildTestDeploy
   jobs:
-  - job: BuildAndDeploy
+  - job: BuildTestDeploy
     pool:
       vmImage: ubuntu-latest
     steps:
-    # Install Node.js
+    # Login to Azure
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: $(AZURE_SUBSCRIPTION)
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          echo "Logged in to Azure"
+      displayName: "Login to Azure"
+
+    # Install Node.js version compatible with your project
     - task: NodeTool@0
       inputs:
-        versionSpec: "18.x"
+        versionSpec: "16.x"
       displayName: "Install Node.js"
 
-    # Install frontend dependencies and build
+    # Install NPM dependencies and build the frontend project using Vite
     - script: |
         npm install
         npm run build
-      workingDirectory: ./FrontEnd
-      displayName: "Install and build Frontend"
+      workingDirectory: ./FrontEnd # Make sure the working directory is where package.json exists
+      displayName: "npm install and build"
 
-    # Copy built frontend (dist) to backend directory
+    # Run unit tests for TrainerProfile and append to JUnit report
     - script: |
-        mkdir -p ./BackEnd/dist
-        cp -r ./FrontEnd/dist/* ./BackEnd/dist/
-      displayName: "Copy Frontend build to Backend dist directory"
+        npm test --watchAll=false
+      workingDirectory: ./FrontEnd # Path to package.json and tests
+      displayName: 'Run every unit test'
 
-    # Verify dist folder in BackEnd
+    # Publish the merged JUnit test results
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFiles: './FrontEnd/junit.xml' # Path to JUnit test result file, matches the output directory in package.json
+        testRunTitle: 'Merged Test Results'
+        mergeTestResults: true
+
+    # Optional: If you want to collect code coverage reports
+    # - script: |
+    #     npm test -- --coverage --watchAll=false
+    #   workingDirectory: ./FrontEnd
+    #   displayName: 'Run tests with code coverage'
+
+    # Copy built frontend (dist) to backend public directory
     - script: |
-        echo "Contents of BackEnd/dist directory:"
-        ls -R ./BackEnd/dist
-      displayName: "Verify dist Directory in BackEnd"
+        mkdir -p ./BackEnd/public
+        cp -r ./FrontEnd/dist/* ./BackEnd/public/
+      displayName: "Copy Frontend build to Backend public directory"
 
     # Install backend dependencies
     - script: |
@@ -48,47 +70,14 @@ stages:
       workingDirectory: ./BackEnd
       displayName: "Install Backend dependencies"
 
-    # Create a ZIP file of the Backend directory (using .zipignore to skip large files)
-    - task: ArchiveFiles@2
+    # Deploy the App using Azure CLI
+    - task: AzureCLI@2
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/BackEnd'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/backend.zip'
-        verbose: true
-        excludeFiles: '**/.zipignore'  # Use .zipignore to exclude unnecessary files
-      displayName: "Create ZIP of Backend with dist folder included"
-
-    # Deploy the ZIP file to Azure App Service via Kudu API with retry logic
-    - task: Bash@3
-      inputs:
-        targetType: 'inline'
-        script: |
-          RETRIES=5
-          while [ $RETRIES -gt 0 ]; do
-            curl -X POST -u "$FTP_USERNAME:$FTP_PASSWORD" \
-              -F "package=@$(Build.ArtifactStagingDirectory)/backend.zip" \
-              $(KUDU_API_URL)/api/zipdeploy
-            if [ $? -eq 0 ]; then
-              echo "Deployment successful."
-              break
-            else
-              echo "Deployment failed. Retrying..."
-              RETRIES=$((RETRIES - 1))
-              sleep 10
-            fi
-          done
-          if [ $RETRIES -eq 0 ]; then
-            echo "Deployment failed after multiple attempts."
-            exit 1
-          fi
-      displayName: "Deploy ZIP to Azure App Service via Kudu API"
-
-    # Verify contents of /site/wwwroot on Azure App Service after deployment
-    - task: Bash@3
-      inputs:
-        targetType: 'inline'
-        script: |
-          echo "Checking deployed files on Azure App Service:"
-          curl -u "$FTP_USERNAME:$FTP_PASSWORD" $(KUDU_API_URL)/api/vfs/site/wwwroot/ -s | jq .
-      displayName: "Verify Deployment on Azure App Service"
+        azureSubscription: $(AZURE_SUBSCRIPTION)
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          echo "Starting deployment to Azure App Service..."
+          az webapp up --name $(APP_NAME) --resource-group $(RESOURCE_GROUP) --runtime "NODE|18-lts" --location "Australia Central"
+          echo "Deployment to Azure App Service complete!"
+      displayName: "Deploy to Azure App Service using Azure CLI"
