@@ -6,7 +6,7 @@ pool:
 
 variables:
   AZURE_WEB_APP_NAME: 'gym'
-  AZURE_WEB_APP_PACKAGE_PATH: '$(Build.ArtifactStagingDirectory)/backend.zip'
+  KUDU_API_URL: 'https://gym-hkdtbzfbg4fjeyad.scm.canadacentral-01.azurewebsites.net'
   FTP_USERNAME: 'gym\$gym'  # Use correct username format
   # Ensure FTP_PASSWORD is stored securely as a secret in Azure DevOps
 
@@ -36,6 +36,12 @@ stages:
         cp -r ./FrontEnd/dist/* ./BackEnd/dist/
       displayName: "Copy Frontend build to Backend dist directory"
 
+    # Verify dist folder in BackEnd
+    - script: |
+        echo "Contents of BackEnd/dist directory:"
+        ls -R ./BackEnd/dist
+      displayName: "Verify dist Directory in BackEnd"
+
     # Install backend dependencies
     - script: |
         npm install
@@ -51,14 +57,38 @@ stages:
         archiveFile: '$(Build.ArtifactStagingDirectory)/backend.zip'
         verbose: true
         excludeFiles: '**/.zipignore'  # Use .zipignore to exclude unnecessary files
-      displayName: "Create ZIP of Backend and Frontend build output"
+      displayName: "Create ZIP of Backend with dist folder included"
 
-    # Deploy the ZIP file to Azure App Service
-    - task: AzureWebApp@1
+    # Deploy the ZIP file to Azure App Service via Kudu API with retry logic
+    - task: Bash@3
       inputs:
-        azureSubscription: '<Service Connection Name>'  # Replace with your actual Azure service connection name
-        appType: 'webApp'
-        appName: '$(AZURE_WEB_APP_NAME)'
-        package: '$(AZURE_WEB_APP_PACKAGE_PATH)'
-        deploymentMethod: 'zipDeploy'
-      displayName: "Deploy ZIP to Azure App Service"
+        targetType: 'inline'
+        script: |
+          RETRIES=5
+          while [ $RETRIES -gt 0 ]; do
+            curl -X POST -u "$FTP_USERNAME:$FTP_PASSWORD" \
+              -F "package=@$(Build.ArtifactStagingDirectory)/backend.zip" \
+              $(KUDU_API_URL)/api/zipdeploy
+            if [ $? -eq 0 ]; then
+              echo "Deployment successful."
+              break
+            else
+              echo "Deployment failed. Retrying..."
+              RETRIES=$((RETRIES - 1))
+              sleep 10
+            fi
+          done
+          if [ $RETRIES -eq 0 ]; then
+            echo "Deployment failed after multiple attempts."
+            exit 1
+          fi
+      displayName: "Deploy ZIP to Azure App Service via Kudu API"
+
+    # Verify contents of /site/wwwroot on Azure App Service after deployment
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo "Checking deployed files on Azure App Service:"
+          curl -u "$FTP_USERNAME:$FTP_PASSWORD" $(KUDU_API_URL)/api/vfs/site/wwwroot/ -s | jq .
+      displayName: "Verify Deployment on Azure App Service"
