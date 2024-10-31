@@ -7,7 +7,6 @@ pool:
 variables:
   APP_NAME: 'fitgymasd-ekcge9fqfebydsbr'  # Your Azure App Service exact name
   RESOURCE_GROUP: 'ASDFitGym_group'  # Your Azure resource group name
-  # Ensure PUBLISH_PROFILE is added as a secret in Azure DevOps with the full publish profile XML content
 
 stages:
 - stage: BuildAndDeploy
