@@ -40,7 +40,7 @@ sequelize.authenticate()
   });
 
 // Serve static files from the frontend's dist folder
-app.use(express.static(path.join(__dirname, '../FrontEnd/dist')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // Register API routes, prefixed with /api
 app.use('/api', userRoutes);
