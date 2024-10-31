@@ -5,9 +5,10 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  KUDU_DEPLOY_URL: 'https://gym-hkdtbzfbg4fjeyad.scm.azurewebsites.net/api/zipdeploy'  # Corrected Kudu deployment URL
-  KUDU_USERNAME: 'gym\$gym'  # Kudu Username
-  # Make sure KUDU_PASSWORD is stored as a secret in Azure DevOps
+  AZURE_WEB_APP_NAME: 'gym'
+  KUDU_API_URL: 'https://gym-hkdtbzfbg4fjeyad.scm.canadacentral-01.azurewebsites.net'
+  FTP_USERNAME: 'gym\$gym'  # Use correct username format
+  # Ensure FTP_PASSWORD is stored securely as a secret in Azure DevOps
 
 stages:
 - stage: BuildAndDeploy
@@ -41,7 +42,7 @@ stages:
       workingDirectory: ./BackEnd
       displayName: "Install Backend dependencies"
 
-    # Create a ZIP archive of the Backend directory, including frontend build files
+    # Create a ZIP file of the Backend directory (using .zipignore to skip large files)
     - task: ArchiveFiles@2
       inputs:
         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/BackEnd'
@@ -49,7 +50,16 @@ stages:
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/backend.zip'
         verbose: true
-      displayName: "Archive Backend and Frontend build into ZIP"
+        excludeFiles: '**/.zipignore'  # Use .zipignore to exclude unnecessary files
+      displayName: "Create ZIP of Backend and Frontend build output"
+
+    # Upload the ZIP file as an artifact
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: '$(Build.ArtifactStagingDirectory)/backend.zip'
+        artifactName: 'backend'
+        publishLocation: 'Container'
+      displayName: "Publish ZIP as Build Artifact"
 
     # Deploy the ZIP file to Azure App Service via Kudu API with retry logic
     - task: Bash@3
@@ -57,26 +67,21 @@ stages:
         targetType: 'inline'
         script: |
           RETRIES=5
-          SUCCESS=false
           while [ $RETRIES -gt 0 ]; do
-            echo "Attempting deployment via Kudu API..."
-            curl -X POST -u "$KUDU_USERNAME:$KUDU_PASSWORD" \
+            curl -X POST -u "$FTP_USERNAME:$FTP_PASSWORD" \
               -F "package=@$(Build.ArtifactStagingDirectory)/backend.zip" \
-              "$KUDU_DEPLOY_URL"
-            
+              $(KUDU_API_URL)/api/zipdeploy
             if [ $? -eq 0 ]; then
               echo "Deployment successful."
-              SUCCESS=true
               break
             else
-              echo "Deployment failed. Retrying in 10 seconds..."
+              echo "Deployment failed. Retrying..."
               RETRIES=$((RETRIES - 1))
               sleep 10
             fi
           done
-          
-          if [ "$SUCCESS" = false ]; then
+          if [ $RETRIES -eq 0 ]; then
             echo "Deployment failed after multiple attempts."
             exit 1
           fi
-      displayName: "Deploy ZIP to Azure App Service via Kudu"
+      displayName: "Deploy ZIP to Azure App Service via Kudu API"

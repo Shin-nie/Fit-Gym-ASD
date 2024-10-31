@@ -63,7 +63,7 @@ app.get('/api/health', (req, res) => {
 
 // Catch-all route to serve index.html for any non-API routes (client-side routing support)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../FrontEnd/dist/index.html'));
+  res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 
 // Start the server
