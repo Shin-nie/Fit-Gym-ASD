@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="25" failures="0" errors="0" time="2.04">
-  <testsuite name="Header Navigation Test" errors="0" failures="0" skipped="0" timestamp="2024-10-31T11:18:16" time="0.804" tests="1">
-    <testcase classname="Header Navigation Test navigates to About Us page when About link is clicked" name="Header Navigation Test navigates to About Us page when About link is clicked" time="0.028" file="src/test/navigation.test.js">
+<testsuites name="jest tests" tests="25" failures="0" errors="0" time="1.769">
+  <testsuite name="Header Navigation Test" errors="0" failures="0" skipped="0" timestamp="2024-10-31T14:52:17" time="0.665" tests="1">
+    <testcase classname="Header Navigation Test navigates to About Us page when About link is clicked" name="Header Navigation Test navigates to About Us page when About link is clicked" time="0.026" file="src/test/navigation.test.js">
     </testcase>
   </testsuite>
-  <testsuite name="ProgressLineGraphByUser Component" errors="0" failures="0" skipped="0" timestamp="2024-10-31T11:18:16" time="0.886" tests="5">
+  <testsuite name="ProgressLineGraphByUser Component" errors="0" failures="0" skipped="0" timestamp="2024-10-31T14:52:17" time="0.686" tests="5">
     <testcase classname="ProgressLineGraphByUser Component Chart displays mock data" name="ProgressLineGraphByUser Component Chart displays mock data" time="0.024" file="src/test/ProgressLineGraph.test.js">
     </testcase>
     <testcase classname="ProgressLineGraphByUser Component Error messages display correctly" name="ProgressLineGraphByUser Component Error messages display correctly" time="0.005" file="src/test/ProgressLineGraph.test.js">
     </testcase>
     <testcase classname="ProgressLineGraphByUser Component Chart updates correctly" name="ProgressLineGraphByUser Component Chart updates correctly" time="0.006" file="src/test/ProgressLineGraph.test.js">
     </testcase>
-    <testcase classname="ProgressLineGraphByUser Component Zoom function working correctly" name="ProgressLineGraphByUser Component Zoom function working correctly" time="0.003" file="src/test/ProgressLineGraph.test.js">
+    <testcase classname="ProgressLineGraphByUser Component Zoom function working correctly" name="ProgressLineGraphByUser Component Zoom function working correctly" time="0.002" file="src/test/ProgressLineGraph.test.js">
     </testcase>
     <testcase classname="ProgressLineGraphByUser Component Loading displays correctly" name="ProgressLineGraphByUser Component Loading displays correctly" time="0.001" file="src/test/ProgressLineGraph.test.js">
     </testcase>
   </testsuite>
-  <testsuite name="TrainerProfile Component" errors="0" failures="0" skipped="0" timestamp="2024-10-31T11:18:16" time="1.047" tests="5">
-    <testcase classname="TrainerProfile Component displays trainer profile and certificates once loaded" name="TrainerProfile Component displays trainer profile and certificates once loaded" time="0.038" file="src/test/TrainerProfile.test.js">
+  <testsuite name="TrainerProfile Component" errors="0" failures="0" skipped="0" timestamp="2024-10-31T14:52:17" time="0.752" tests="5">
+    <testcase classname="TrainerProfile Component displays trainer profile and certificates once loaded" name="TrainerProfile Component displays trainer profile and certificates once loaded" time="0.043" file="src/test/TrainerProfile.test.js">
     </testcase>
-    <testcase classname="TrainerProfile Component allows editing the trainer profile" name="TrainerProfile Component allows editing the trainer profile" time="0.027" file="src/test/TrainerProfile.test.js">
+    <testcase classname="TrainerProfile Component allows editing the trainer profile" name="TrainerProfile Component allows editing the trainer profile" time="0.025" file="src/test/TrainerProfile.test.js">
     </testcase>
-    <testcase classname="TrainerProfile Component cancels editing the trainer profile" name="TrainerProfile Component cancels editing the trainer profile" time="0.014" file="src/test/TrainerProfile.test.js">
+    <testcase classname="TrainerProfile Component cancels editing the trainer profile" name="TrainerProfile Component cancels editing the trainer profile" time="0.013" file="src/test/TrainerProfile.test.js">
     </testcase>
-    <testcase classname="TrainerProfile Component calls deleteProfile when Delete button is clicked" name="TrainerProfile Component calls deleteProfile when Delete button is clicked" time="0.021" file="src/test/TrainerProfile.test.js">
+    <testcase classname="TrainerProfile Component calls deleteProfile when Delete button is clicked" name="TrainerProfile Component calls deleteProfile when Delete button is clicked" time="0.024" file="src/test/TrainerProfile.test.js">
     </testcase>
     <testcase classname="TrainerProfile Component enables the save button only if changes are made" name="TrainerProfile Component enables the save button only if changes are made" time="0.009" file="src/test/TrainerProfile.test.js">
     </testcase>
   </testsuite>
-  <testsuite name="Registration" errors="0" failures="0" skipped="0" timestamp="2024-10-31T11:18:16" time="1.542" tests="14">
-    <testcase classname="Registration Error messages for empty fields are displayed on submit" name="Registration Error messages for empty fields are displayed on submit" time="0.104" file="src/test/SignUp.test.js">
+  <testsuite name="Registration" errors="0" failures="0" skipped="0" timestamp="2024-10-31T14:52:17" time="1.211" tests="14">
+    <testcase classname="Registration Error messages for empty fields are displayed on submit" name="Registration Error messages for empty fields are displayed on submit" time="0.127" file="src/test/SignUp.test.js">
     </testcase>
-    <testcase classname="Registration Successfully submits valid details to db" name="Registration Successfully submits valid details to db" time="0.12" file="src/test/SignUp.test.js">
+    <testcase classname="Registration Successfully submits valid details to db" name="Registration Successfully submits valid details to db" time="0.156" file="src/test/SignUp.test.js">
     </testcase>
-    <testcase classname="Ensures sign up form inputs meet minimum requirements Displays error for invalid email address" name="Ensures sign up form inputs meet minimum requirements Displays error for invalid email address" time="0.023" file="src/test/SignUp.test.js">
+    <testcase classname="Ensures sign up form inputs meet minimum requirements Displays error for invalid email address" name="Ensures sign up form inputs meet minimum requirements Displays error for invalid email address" time="0.021" file="src/test/SignUp.test.js">
     </testcase>
-    <testcase classname="Ensures sign up form inputs meet minimum requirements Does not display error for valid email address" name="Ensures sign up form inputs meet minimum requirements Does not display error for valid email address" time="0.018" file="src/test/SignUp.test.js">
+    <testcase classname="Ensures sign up form inputs meet minimum requirements Does not display error for valid email address" name="Ensures sign up form inputs meet minimum requirements Does not display error for valid email address" time="0.017" file="src/test/SignUp.test.js">
     </testcase>
-    <testcase classname="Ensures sign up form inputs meet minimum requirements Displays error if inputted dob makes user younger than 16" name="Ensures sign up form inputs meet minimum requirements Displays error if inputted dob makes user younger than 16" time="0.019" file="src/test/SignUp.test.js">
+    <testcase classname="Ensures sign up form inputs meet minimum requirements Displays error if inputted dob makes user younger than 16" name="Ensures sign up form inputs meet minimum requirements Displays error if inputted dob makes user younger than 16" time="0.017" file="src/test/SignUp.test.js">
     </testcase>
-    <testcase classname="Ensures sign up form inputs meet minimum requirements Does not display error for valid dob" name="Ensures sign up form inputs meet minimum requirements Does not display error for valid dob" time="0.015" file="src/test/SignUp.test.js">
+    <testcase classname="Ensures sign up form inputs meet minimum requirements Does not display error for valid dob" name="Ensures sign up form inputs meet minimum requirements Does not display error for valid dob" time="0.014" file="src/test/SignUp.test.js">
     </testcase>
-    <testcase classname="Ensures sign up form inputs meet minimum requirements Displays errors if fields do not meet the minimum length requirements" name="Ensures sign up form inputs meet minimum requirements Displays errors if fields do not meet the minimum length requirements" time="0.06" file="src/test/SignUp.test.js">
+    <testcase classname="Ensures sign up form inputs meet minimum requirements Displays errors if fields do not meet the minimum length requirements" name="Ensures sign up form inputs meet minimum requirements Displays errors if fields do not meet the minimum length requirements" time="0.057" file="src/test/SignUp.test.js">
     </testcase>
-    <testcase classname="Ensures sign up form inputs meet minimum requirements Fields do not display errors when filled in correctly (with minimum valid values)." name="Ensures sign up form inputs meet minimum requirements Fields do not display errors when filled in correctly (with minimum valid values)." time="0.039" file="src/test/SignUp.test.js">
+    <testcase classname="Ensures sign up form inputs meet minimum requirements Fields do not display errors when filled in correctly (with minimum valid values)." name="Ensures sign up form inputs meet minimum requirements Fields do not display errors when filled in correctly (with minimum valid values)." time="0.038" file="src/test/SignUp.test.js">
     </testcase>
-    <testcase classname="Ensures sign up form inputs meet minimum requirements Displays error if card is expired." name="Ensures sign up form inputs meet minimum requirements Displays error if card is expired." time="0.016" file="src/test/SignUp.test.js">
+    <testcase classname="Ensures sign up form inputs meet minimum requirements Displays error if card is expired." name="Ensures sign up form inputs meet minimum requirements Displays error if card is expired." time="0.018" file="src/test/SignUp.test.js">
     </testcase>
-    <testcase classname="Ensures sign up form inputs meet minimum requirements Does not display an error when expiration date is set to a future date." name="Ensures sign up form inputs meet minimum requirements Does not display an error when expiration date is set to a future date." time="0.015" file="src/test/SignUp.test.js">
+    <testcase classname="Ensures sign up form inputs meet minimum requirements Does not display an error when expiration date is set to a future date." name="Ensures sign up form inputs meet minimum requirements Does not display an error when expiration date is set to a future date." time="0.013" file="src/test/SignUp.test.js">
     </testcase>
-    <testcase classname="Ensures sign up form inputs meet minimum requirements Displays error if phone number, cvv and card number fields contain non-numeric characters." name="Ensures sign up form inputs meet minimum requirements Displays error if phone number, cvv and card number fields contain non-numeric characters." time="0.023" file="src/test/SignUp.test.js">
+    <testcase classname="Ensures sign up form inputs meet minimum requirements Displays error if phone number, cvv and card number fields contain non-numeric characters." name="Ensures sign up form inputs meet minimum requirements Displays error if phone number, cvv and card number fields contain non-numeric characters." time="0.022" file="src/test/SignUp.test.js">
     </testcase>
-    <testcase classname="Ensures sign up form inputs meet minimum requirements Does not display errors if phone number, cvv and card number fields contain numeric characters only of a valid length." name="Ensures sign up form inputs meet minimum requirements Does not display errors if phone number, cvv and card number fields contain numeric characters only of a valid length." time="0.019" file="src/test/SignUp.test.js">
+    <testcase classname="Ensures sign up form inputs meet minimum requirements Does not display errors if phone number, cvv and card number fields contain numeric characters only of a valid length." name="Ensures sign up form inputs meet minimum requirements Does not display errors if phone number, cvv and card number fields contain numeric characters only of a valid length." time="0.02" file="src/test/SignUp.test.js">
     </testcase>
     <testcase classname="Ensures sign up form inputs meet minimum requirements Displays error if password does not contain at least three digits." name="Ensures sign up form inputs meet minimum requirements Displays error if password does not contain at least three digits." time="0.016" file="src/test/SignUp.test.js">
     </testcase>
-    <testcase classname="Ensures sign up form inputs meet minimum requirements Does not display any error if password does contains at least three digits and meets min length requirements." name="Ensures sign up form inputs meet minimum requirements Does not display any error if password does contains at least three digits and meets min length requirements." time="0.013" file="src/test/SignUp.test.js">
+    <testcase classname="Ensures sign up form inputs meet minimum requirements Does not display any error if password does contains at least three digits and meets min length requirements." name="Ensures sign up form inputs meet minimum requirements Does not display any error if password does contains at least three digits and meets min length requirements." time="0.014" file="src/test/SignUp.test.js">
     </testcase>
   </testsuite>
 </testsuites>
