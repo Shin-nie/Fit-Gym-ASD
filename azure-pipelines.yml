@@ -16,16 +16,6 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
-    # Login to Azure
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: $(AZURE_SUBSCRIPTION)
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          echo "Logged in to Azure"
-      displayName: "Login to Azure"
-
     # Install Node.js version compatible with your project
     - task: NodeTool@0
       inputs:
