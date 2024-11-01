@@ -64,6 +64,12 @@ stages:
           archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
         displayName: 'Archive Combined Backend and Frontend for Deployment'
 
+      # Download Publish Profile Secure File
+      - task: DownloadSecureFile@1
+        inputs:
+          secureFile: 'profile.publishsettings'  # Name of the secure file in Azure DevOps Library
+        displayName: 'Download Azure Publish Profile'
+
       # Deploy to Azure App Service using Publish Profile via Curl and Kudu API
       - task: Bash@3
         inputs:
@@ -72,8 +78,8 @@ stages:
             echo "Starting deployment using Publish Profile..."
             
             # Extract username and password from the publish profile
-            PUBLISH_USERNAME=$(echo "$PUBLISH_PROFILE" | grep -oP '(?<=userName=")[^"]+')
-            PUBLISH_PASSWORD=$(echo "$PUBLISH_PROFILE" | grep -oP '(?<=userPWD=")[^"]+')
+            PUBLISH_USERNAME=$(grep -oP '(?<=userName=")[^"]+' $(Agent.TempDirectory)/profile.publishsettings)
+            PUBLISH_PASSWORD=$(grep -oP '(?<=userPWD=")[^"]+' $(Agent.TempDirectory)/profile.publishsettings)
             
             # Use the exact domain with region suffix for deployment
             curl -X POST -u "$PUBLISH_USERNAME:$PUBLISH_PASSWORD" \
@@ -81,6 +87,4 @@ stages:
                  https://fitgymasd-ekcge9fqfebydsbr.scm.australiacentral-01.azurewebsites.net/api/zipdeploy
             
             echo "Deployment to Azure App Service complete!"
-        env:
-          PUBLISH_PROFILE: $(PUBLISH_PROFILE)  # Explicitly map the secret as an environment variable
         displayName: 'Deploy to Azure App Service using Publish Profile and Curl'
